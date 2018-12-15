@@ -1,0 +1,78 @@
+version: "3"
+
+services:
+  jenkins:
+    build: ./jenkins
+    restart: on-failure:3
+    container_name: jenkins
+    volumes:
+      - ~/jenkins_home:/var/jenkins_home
+    ports:
+      - "10001:8080"
+      - "50000:50000"
+
+  nexus:
+    image: sonatype/nexus
+    container_name: nexus
+    environment:
+    - CONTEXT_PATH=/nexus
+    ports:
+    - "10002:8081"
+    volumes:
+    - nexus:/var/lib/nexus
+
+  postgresql:
+    image: orchardup/postgresql:latest
+    container_name: postgresql
+    environment:
+      - POSTGRESQL_USER=sonar
+      - POSTGRESQL_PASS=ranos
+      - POSTGRESQL_DB=sonar-ci
+    volumes:
+      - sonarqube/:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  sonarqube:
+    build: ./sonarqube
+    restart: on-failure:3
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+      - "9092:9092"
+    links:
+      - postgresql:db
+    environment:
+      - DB_USER=sonar
+      - DB_PASS=ranos
+      - DB_NAME=sonar-ci
+
+  gitlab:
+    build: ./gitlab
+    restart: on-failure:3
+    container_name: gitlab-ce
+    ports:
+      - "10022:22"
+      - "10080:80"
+    environment:
+      - GITLAB_PORT=10080
+      - GITLAB_SSH_PORT=10022
+      - DB_NAME=sonar-ci
+      - DB_USER=sonar
+      - DB_PASS=ranos
+
+  proxy:
+    build: ./nginx
+    restart: on-failure:3
+    container_name: proxy
+    ports:
+    - "8080:80"
+    links:
+    - jenkins
+    - nexus
+    - sonarqube
+
+volumes:
+  jenkins_home:
+  nexus:
+  sonarqube:
