@@ -3,6 +3,8 @@ MAINTAINER Michel RABEMANANTSOA <hmichel.rabemanantsoa@gmail.com>
 
 RUN rm /etc/nginx/nginx.conf /etc/nginx/mime.types
 
+RUN apt-get install curl
+
 COPY nginx-entrypoint.sh /usr/local/bin/nginx-entrypoint.sh
 
 COPY nginx.conf /etc/nginx/

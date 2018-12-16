@@ -5,8 +5,6 @@ COPY plugins.txt /usr/share/jenkins/plugins.txt
 
 RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
 
-RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
-
 ENV JAVA_VERSION 8
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 

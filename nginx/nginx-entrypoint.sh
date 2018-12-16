@@ -13,7 +13,7 @@ if [ "$1" = "nginx" ]; then
   echo "============================"
 
   SLEEP_TIME=5
-  declare -a DEPENDENCIES=( "jenkins:8080/jenkins" "sonarqube:9000/sonar" "nexus:8081/nexus" "gitlab:10080/gitlab")
+  declare -a DEPENDENCIES=( "jenkins:10001/jenkins" "sonarqube:9000/sonar" "nexus:10002/nexus" "gitlab:10080/gitlab")
   for d in ${DEPENDENCIES[@]}; do
     echo "waiting for $d to be available";
     until curl --location --output /dev/null --silent --write-out "%{http_code}\\n" http://$d | grep "200\|404\|403\|401\|301\|302" &> /dev/null
